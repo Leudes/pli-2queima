@@ -8,6 +8,7 @@ PASTA_GRAFOS="$(realpath "$PASTA_GRAFOS")"
 PASTA_SAIDA="$(realpath -m "$PASTA_SAIDA")"
 TEMPO="${TEMPO:-300}"
 THREADS="${THREADS:-1}"
+MAX_BINARIAS="${MAX_BINARIAS:-1000000}"
 JULIA_EXECUTAVEL="${JULIA_EXECUTAVEL:-$(command -v julia || true)}"
 
 if [[ -z "$JULIA_EXECUTAVEL" && -x "$HOME/.juliaup/bin/julia" ]]; then
@@ -24,4 +25,4 @@ cd "$PASTA_SCRIPT"
     "$PASTA_SAIDA" \
     --tempo "$TEMPO" \
     --threads "$THREADS" \
-    --max-binarias 0
+    --max-binarias "$MAX_BINARIAS"

@@ -66,10 +66,11 @@ vizinho `BRKGA`:
 As principais opções são `--tempo SEGUNDOS`, `--threads N`,
 `--log-solver` e `--sobrescrever`. A entrada pode ser uma pasta ou apenas um
 arquivo `.txt`.
-O script da base usa `--max-binarias 0`, portanto tenta construir o modelo de
-todas as instâncias. Se uma instância falhar antes de o solver produzir uma
-solução, o CSV conserva como solução viável de segurança o resultado da mesma
-heurística inicial usada pelo GVNS.
+O script da base usa, por padrão, `--max-binarias 1000000`. Instâncias cuja
+estimativa ultrapassa esse limite não têm o modelo construído: o CSV recebe o
+estado `HEURISTIC_FALLBACK_MODEL_TOO_LARGE` e conserva como solução viável o
+resultado da mesma heurística inicial usada pelo GVNS. A variável de ambiente
+`MAX_BINARIAS` permite alterar o limite, e o valor zero o desativa.
 
 O programa percorre `<dir_entrada>` recursivamente, resolve cada arquivo `.txt` e grava **um CSV por grafo** em `<dir_saida>`, espelhando a estrutura de subpastas da entrada:
 
@@ -140,7 +141,7 @@ Os parâmetros ficam no início de `burning2_pli_warmstart.jl`:
 | `SHRINK_HORIZON` | `true` | usa $T = z_g$ em vez de $T = n$ |
 | `SILENT` | `true` | `false` exibe o log do HiGHS (útil para conferir o MIP start) |
 | `SOLVER_THREADS` | `1` | quantidade padrão de threads do solver |
-| `MAX_BINARY_VARIABLES` | `0` | limite preventivo; zero desativa |
+| `MAX_BINARY_VARIABLES` | `1000000` | limite preventivo; zero desativa |
 
 Para rodar vários processos em paralelo, convém limitar as threads do HiGHS para que as instâncias não disputem CPU e os tempos fiquem comparáveis.
 

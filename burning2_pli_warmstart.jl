@@ -24,7 +24,7 @@ const WARM_START     = true   # fornece a solução gulosa como solução inicia
 const SHRINK_HORIZON = true   # usa T = valor guloso (limitante superior válido) em vez de T = n
 const SILENT         = true   # false mostra o log do solver (útil p/ conferir o MIP start)
 const SOLVER_THREADS = 1      # evita que execuções disputem todos os núcleos
-const MAX_BINARY_VARIABLES = 0 # zero desativa o limite preventivo
+const MAX_BINARY_VARIABLES = 1_000_000
 const CABECALHO_CSV =
     "graph,vertices,edges,greedy_method,greedy_burning_number," *
     "pli_burning_number,objective_bound,gap,time_greedy,time_model," *
@@ -630,8 +630,18 @@ function processa_entrada(input_path::AbstractString, output_dir::AbstractString
 
         println("[", i, "/", total, "] ", filepath)
 
-        # Só considera "processado" se tiver cabeçalho + pelo menos uma linha
-        if !overwrite && isfile(out_csv) && countlines(out_csv) >= 2
+        # Um checkpoint heurístico indica que a execução anterior foi
+        # interrompida durante a construção ou resolução do modelo. Ele deve
+        # ser reavaliado para receber um estado final, inclusive quando o novo
+        # limite preventivo classificar o modelo como grande demais.
+        resultado_finalizado = false
+        if isfile(out_csv) && countlines(out_csv) >= 2
+            ultima_linha = last(readlines(out_csv))
+            status = strip(last(split(ultima_linha, ',')))
+            resultado_finalizado = status != "HEURISTIC_CHECKPOINT"
+        end
+
+        if !overwrite && resultado_finalizado
             println("  Já processado, pulando -> ", out_csv)
             continue
         end
