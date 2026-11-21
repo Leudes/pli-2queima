@@ -1,0 +1,9 @@
+# Resultados locais; os CSVs originais do repositorio continuam versionados.
+output/*/
+
+# Versoes experimentais locais que nao fazem parte da versao adotada.
+experimental/
+
+# Arquivos temporarios do Julia e do sistema.
+*.tmp
+.DS_Store
